@@ -1,6 +1,7 @@
 package com.orion.client;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -8,6 +9,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -28,7 +31,10 @@ public class DiscardClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new DiscardClientHandler());
+                            ch.pipeline()
+                                    .addLast("encoder",new StringEncoder())
+                                    .addLast("decoder",new StringDecoder())
+                                    .addLast(new DiscardClientHandler());
                         }
                     });
 
@@ -52,10 +58,19 @@ public class DiscardClient {
             //控制台输入
             Scanner scanner = new Scanner(System.in);
             while (scanner.hasNextLine()){
-                String input = scanner.nextLine();
-                future.channel().writeAndFlush(input);
+                future.channel().writeAndFlush(Unpooled.wrappedBuffer(scanner.nextLine().getBytes()));
             }
-
+            future.channel().closeFuture().sync();
+            future.addListener(new GenericFutureListener<Future<? super Void>>() {
+                public void operationComplete(Future<? super Void> future) {
+                    if(future.isCancelled()){
+                        System.out.println("客户端正在关闭..");
+                    }
+                    if(future.isCancellable()){
+                        System.out.println("客户端已经关闭..OK");
+                    }
+                }
+            });
         } catch (InterruptedException e) {
             System.out.println("客户端启动失败" + e.getMessage());
         } finally {

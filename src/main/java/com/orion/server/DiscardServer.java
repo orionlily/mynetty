@@ -20,7 +20,7 @@ public class DiscardServer {private int port;
     }
 
     public void run() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1); // (1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap(); // (2)
@@ -34,7 +34,9 @@ public class DiscardServer {private int port;
                                     .addLast("encoder",new StringEncoder())
                                     .addLast("decoder",new StringDecoder())
                                     //.addLast("aggregator", new HttpObjectAggregator(512 * 1024))    //
-                                    .addLast(new DiscardServerHandler());
+                                    .addLast(new DiscardServerHandler())
+                                    .addLast(new DiscardServerHandler2());
+
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)

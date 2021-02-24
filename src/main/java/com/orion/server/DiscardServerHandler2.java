@@ -12,20 +12,20 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 /**
  * @author li.lc
  */
-public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
+public class DiscardServerHandler2 extends ChannelInboundHandlerAdapter { // (1)
 
     public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         channels.add(ctx.channel());
-        System.out.println(ctx.channel().remoteAddress().toString() + " 上线了 ");
+        System.out.println(ctx.channel().remoteAddress().toString() + " 2上线了 ");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         channels.remove(ctx.channel());
-        System.out.println(ctx.channel().remoteAddress().toString() + " 离线了 ");
+        System.out.println(ctx.channel().remoteAddress().toString() + " 2离线了 ");
     }
 
     @Override
@@ -35,17 +35,17 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
 
             String sender = ctx.channel().remoteAddress().toString();
             // Discard the received data silently.
-            System.out.println("收到来自【" + sender + "】的消息 :" + msg.toString());
+            System.out.println("收到来自【" + sender + "】的2消息 :" + msg.toString());
 
             Channel c = ctx.channel();
 
             for (Channel channel : channels) {
                 String s;
                 if (channel.equals(c)) {
-                    s = "【自己】说：" + msg.toString();
+                    s = "【自己】2说：" + msg.toString();
                     channel.writeAndFlush(Unpooled.wrappedBuffer(s.getBytes()));
                 } else {
-                    s = "【用户】" + sender + "说：" + msg.toString();
+                    s = "【用户】2" + sender + "说：" + msg.toString();
                     channel.writeAndFlush(Unpooled.wrappedBuffer(s.getBytes()));
                 }
             }
@@ -59,7 +59,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
         // Close the connection when an exception is raised.
-        System.out.println("连接发生异常：" + cause.getMessage());
+        System.out.println("连接发生2异常：" + cause.getMessage());
         ctx.close();
     }
 
@@ -76,7 +76,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
          * 这里 ChannelGroup 底层封装会遍历给所有的channel发送消息
          *
          */
-        String msg = "【用户】 " + addr + " 离开了，当前在线人数是:" + channels.size();
+        String msg = "【用户】 " + addr + " 离开了，当前在线人数2是:" + channels.size();
         //打印 ChannelGroup中的人数
         channels.writeAndFlush(msg);
         //打印 ChannelGroup中的人数
@@ -87,11 +87,11 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
     public void handlerAdded(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
         String addr = channel.remoteAddress().toString();
-        String msg = "【用户】 " + addr + " 加入了";
+        String msg = "【用户】 " + addr + " 2加入了";
         //打印 ChannelGroup中的人数
         channels.writeAndFlush(msg);
         channels.add(channel);
         //打印 ChannelGroup中的人数
-        System.out.println(msg + "，当前在线人数是:" + channels.size());
+        System.out.println(msg + "，当2前在线人数是:" + channels.size());
     }
 }
