@@ -12,7 +12,7 @@ public class DiscardClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        System.out.println("1号handler:" + msg.toString());
+        System.out.println("handler:" + msg.toString());
     }
 
     @Override
