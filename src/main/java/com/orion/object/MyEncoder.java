@@ -14,7 +14,12 @@ public class MyEncoder extends MessageToByteEncoder<User> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, User msg, ByteBuf out) throws Exception {
+        /*
+        使用java自带字节流
+        byte[] datas = ByteUtil.objectToByte(msg);
+        out.writeBytes(datas);*/
         String jsonStr = JSONUtil.toJsonStr(msg);
+        System.out.println("编码器ObjToJson ==> User:"+ msg.toString() +",对应json："+ jsonStr);
         out.writeBytes(jsonStr.getBytes(StandardCharsets.UTF_8));
     }
 }

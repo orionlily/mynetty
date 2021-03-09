@@ -32,8 +32,8 @@ public class DiscardClient {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                                    .addLast("encoder",new StringEncoder())
-                                    .addLast("decoder",new StringDecoder())
+                                    .addLast("encoder", new StringEncoder())
+                                    .addLast("decoder", new StringDecoder())
                                     .addLast(new DiscardClientHandler());
                         }
                     });
@@ -57,18 +57,16 @@ public class DiscardClient {
 
             //控制台输入
             Scanner scanner = new Scanner(System.in);
-            while (scanner.hasNextLine()){
+            while (scanner.hasNextLine()) {
                 future.channel().writeAndFlush(Unpooled.wrappedBuffer(scanner.nextLine().getBytes()));
             }
             future.channel().closeFuture().sync();
-            future.addListener(new GenericFutureListener<Future<? super Void>>() {
-                public void operationComplete(Future<? super Void> future) {
-                    if(future.isCancelled()){
-                        System.out.println("客户端正在关闭..");
-                    }
-                    if(future.isCancellable()){
-                        System.out.println("客户端已经关闭..OK");
-                    }
+            future.addListener(future1 -> {
+                if (future.isCancelled()) {
+                    System.out.println("客户端正在关闭..");
+                }
+                if (future.isCancellable()) {
+                    System.out.println("客户端已经关闭..OK");
                 }
             });
         } catch (InterruptedException e) {

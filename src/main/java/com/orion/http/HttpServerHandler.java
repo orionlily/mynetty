@@ -31,7 +31,8 @@ public class HttpServerHandler extends ChannelInboundHandlerAdapter { // (1)
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws URISyntaxException { // (2)
         try {
             // Do something with msg
-            System.out.println(ctx.handler().toString());
+            System.out.println(ctx.handler().toString()+"----"+msg.getClass());
+
             String sender = ctx.channel().remoteAddress().toString();
             // Discard the received data silently.
             //判断 msg 是不是 httprequest请求
