@@ -58,7 +58,11 @@ public class DiscardClient {
             //控制台输入
             Scanner scanner = new Scanner(System.in);
             while (scanner.hasNextLine()) {
-                future.channel().writeAndFlush(Unpooled.wrappedBuffer(scanner.nextLine().getBytes()));
+                future.channel().writeAndFlush(Unpooled.wrappedBuffer(scanner.nextLine().getBytes())).addListener(future1 -> {
+                    if (future1.isSuccess()) {
+                        System.out.println("唱歌本公告");
+                    }
+                });
             }
             future.channel().closeFuture().sync();
             future.addListener(future1 -> {

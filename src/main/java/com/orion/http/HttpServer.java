@@ -8,6 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
 /**
@@ -33,7 +34,7 @@ public class HttpServer {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
                                     .addLast("codec", new HttpServerCodec())
-                                    //.addLast("aggregator", new HttpObjectAggregator(512 * 1024))    //
+                                    .addLast("aggregator", new HttpObjectAggregator(512 * 1024))    //
                                     .addLast(new HttpServerHandler());
 
                         }
